@@ -1,89 +1,24 @@
 <template>
   <div class="todo fill-height">
-    <v-text-field
-      class="pa-3"
-      outlined
-      label="Add Task"
-      append-icon="mdi-plus"
-      hide-details
-      clearable
-      v-model="newTask"
-      @click:append="addTask"
-      @keyup.enter="addTask"
-      required
-      :rules="rules.title"
-    ></v-text-field>
-    <v-list flat class="pt-0" v-if="tasks.length">
-      <div v-for="task in tasks" :key="task.id">
-        <v-list-item
-          :class="{ 'blue lighten-5': task.done }"
-          @click="finishTask(task.id)"
-        >
-          <template>
-            <v-list-item-action>
-              <v-checkbox :input-value="task.done" color="primary"></v-checkbox>
-            </v-list-item-action>
+    <field-add-task />
 
-            <v-list-item-content>
-              <v-list-item-title
-                :class="{ 'text-decoration-line-through': task.done }"
-                >{{ task.title }}</v-list-item-title
-              >
-            </v-list-item-content>
+    <list-tasks v-if="$store.state.tasks.length" />
 
-            <v-list-item-action>
-              <v-btn icon @click.stop="deleteTask(task.id)">
-                <v-icon color="primary lighten-1">mdi-delete</v-icon>
-              </v-btn>
-            </v-list-item-action>
-          </template>
-        </v-list-item>
-        <v-divider></v-divider>
-      </div>
-    </v-list>
-
-    <div v-else class="no-tasks">
-      <v-icon size="100" left color="primary">mdi-check</v-icon>
-      <div class="text-h5 primary--text">No Tasks</div>
-    </div>
+    <no-tasks v-else />
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import FieldAddTask from '@/components/todo/FieldAddTask'
+import ListTasks from '../components/todo/ListTasks.vue'
+import NoTasks from '../components/todo/NoTasks.vue'
 
 export default {
   name: 'Todo',
-  components: {},
-  data: () => ({
-    rules: {
-      title: [v => (v || '').length > 0 || 'Task title is required'],
-    },
-    newTask: '',
-  }),
-  computed: {
-    ...mapState(['tasks']),
-  },
-  methods: {
-    addTask() {
-      this.$store.commit('addTask', this.newTask)
-      this.newTask = ''
-    },
-    finishTask(id) {
-      this.$store.commit('finishTask', id)
-    },
-    deleteTask(id) {
-      this.$store.commit('deleteTask', id)
-    },
+  components: {
+    FieldAddTask,
+    ListTasks,
+    NoTasks,
   },
 }
 </script>
-<style lang="css">
-.no-tasks {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0.5;
-}
-</style>
