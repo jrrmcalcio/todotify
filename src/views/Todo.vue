@@ -15,10 +15,13 @@
     ></v-text-field>
     <v-list flat class="pt-0" v-if="tasks.length">
       <div v-for="task in tasks" :key="task.id">
-        <v-list-item :class="{ 'blue lighten-5': task.done }">
+        <v-list-item
+          :class="{ 'blue lighten-5': task.done }"
+          @click="finishTask(task.id)"
+        >
           <template>
             <v-list-item-action>
-              <v-checkbox v-model="task.done" color="primary"></v-checkbox>
+              <v-checkbox :input-value="task.done" color="primary"></v-checkbox>
             </v-list-item-action>
 
             <v-list-item-content>
@@ -29,7 +32,7 @@
             </v-list-item-content>
 
             <v-list-item-action>
-              <v-btn icon @click="deleteTask(task.id)">
+              <v-btn icon @click.stop="deleteTask(task.id)">
                 <v-icon color="primary lighten-1">mdi-delete</v-icon>
               </v-btn>
             </v-list-item-action>
@@ -47,7 +50,7 @@
 </template>
 
 <script>
-// @ is an alias to /src
+import { mapState } from 'vuex'
 
 export default {
   name: 'Todo',
@@ -57,19 +60,20 @@ export default {
       title: [v => (v || '').length > 0 || 'Task title is required'],
     },
     newTask: '',
-    tasks: [],
   }),
+  computed: {
+    ...mapState(['tasks']),
+  },
   methods: {
-    deleteTask(id) {
-      this.tasks = this.tasks.filter(t => t.id !== id)
-    },
     addTask() {
-      this.tasks.push({
-        id: Date.now(),
-        title: this.newTask,
-        done: false,
-      })
+      this.$store.commit('addTask', this.newTask)
       this.newTask = ''
+    },
+    finishTask(id) {
+      this.$store.commit('finishTask', id)
+    },
+    deleteTask(id) {
+      this.$store.commit('deleteTask', id)
     },
   },
 }
