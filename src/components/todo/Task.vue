@@ -17,7 +17,7 @@
         </v-list-item-content>
 
         <v-list-item-action>
-          <v-btn icon @click.stop="deleteTask(task.id)">
+          <v-btn icon @click.stop="deleteTask(task)">
             <v-icon color="primary lighten-1">mdi-delete</v-icon>
           </v-btn>
         </v-list-item-action>
@@ -40,8 +40,8 @@ export default {
     finishTask(id) {
       this.$store.commit('finishTask', id)
     },
-    deleteTask(id) {
-      this.$store.commit('deleteTask', id)
+    deleteTask(task) {
+      this.$store.dispatch('deleteTask', task)
     },
   },
 }

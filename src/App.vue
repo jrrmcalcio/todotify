@@ -62,12 +62,15 @@
 
     <v-main>
       <router-view></router-view>
+      <snackbar message="something" />
     </v-main>
   </v-app>
 </template>
 
 <script>
+import Snackbar from './components/global/Snackbar.vue'
 export default {
+  components: { Snackbar },
   data: () => ({
     drawer: false,
     items: [
