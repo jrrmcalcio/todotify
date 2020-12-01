@@ -3,6 +3,8 @@
     <v-list-item
       :class="{ 'blue lighten-5': task.done }"
       @click="finishTask(task.id)"
+      class="white"
+      :ripple="false"
     >
       <template>
         <v-list-item-action>
@@ -16,40 +18,52 @@
           >
         </v-list-item-content>
 
-        <v-list-item-action>
-          <v-btn icon @click.stop="dialogs.delete = true">
-            <v-icon color="primary lighten-1">mdi-delete</v-icon>
+        <v-list-item-action v-if="task.dueDate">
+          <v-list-item-action-text>
+            <v-icon small>mdi-calendar</v-icon>
+            {{ task.dueDate | dueDate }}
+          </v-list-item-action-text>
+        </v-list-item-action>
+
+        <v-list-item-action v-if="!$store.state.sorting">
+          <task-menu :task="task"></task-menu>
+        </v-list-item-action>
+
+        <v-list-item-action v-if="$store.state.sorting">
+          <v-btn color="primary" icon class="drag-handle">
+            <v-icon>mdi-drag-vertical</v-icon>
           </v-btn>
         </v-list-item-action>
       </template>
     </v-list-item>
     <v-divider></v-divider>
-
-    <delete-confirmation
-      :task="task"
-      v-if="dialogs.delete"
-      @cancelDelete="dialogs.delete = false"
-    />
   </div>
 </template>
 
 <script>
-import DeleteConfirmation from './dialogs/DeleteConfirmation.vue'
+import { format } from 'date-fns'
+import TaskMenu from './TaskMenu.vue'
 
 export default {
-  components: { DeleteConfirmation },
+  components: { TaskMenu },
+
   name: 'Taks',
+
   props: {
     task: {
       type: Object,
       required: true,
     },
   },
-  data: () => ({
-    dialogs: {
-      delete: false,
+
+  filters: {
+    dueDate: value => {
+      const date = new Date(value + 'T00:00:00Z') // UTC
+      date.setMinutes(date.getMinutes() + date.getTimezoneOffset()) // Local time zone
+      return format(date, 'MMM d')
     },
-  }),
+  },
+
   methods: {
     finishTask(id) {
       this.$store.commit('finishTask', id)
@@ -57,3 +71,10 @@ export default {
   },
 }
 </script>
+
+<style lang="sass">
+.sortable-ghost
+  opacity: 0
+.sortable-chosen
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3)
+</style>

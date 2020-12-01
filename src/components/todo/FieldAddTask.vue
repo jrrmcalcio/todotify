@@ -3,21 +3,24 @@
     outlined
     class="pa-3"
     label="Add Task"
-    append-icon="mdi-plus"
     hide-details
     clearable
     v-model="newTask"
-    @click:append="addTask"
     @keyup.enter="addTask"
     required
-  ></v-text-field>
+  >
+    <template v-slot:append>
+      <v-icon color="primary" @click="addTask" :disabled="!newTask">
+        mdi-plus
+      </v-icon>
+    </template>
+  </v-text-field>
 </template>
 
 <script>
 export default {
   name: 'FieldAddTask',
   data: () => ({
-    valid: true,
     newTask: '',
   }),
   methods: {

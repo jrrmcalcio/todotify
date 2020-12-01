@@ -9,7 +9,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="$emit('cancelDelete')">
+        <v-btn text @click="$emit('cancel')">
           Cancel
         </v-btn>
         <v-btn
@@ -35,5 +35,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped></style>
