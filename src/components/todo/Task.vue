@@ -2,7 +2,7 @@
   <div>
     <v-list-item
       :class="{ 'blue lighten-5': task.done }"
-      @click="finishTask(task.id)"
+      @click="$store.dispatch('finishTask', task)"
       class="white"
       :ripple="false"
     >
@@ -61,12 +61,6 @@ export default {
       const date = new Date(value + 'T00:00:00Z') // UTC
       date.setMinutes(date.getMinutes() + date.getTimezoneOffset()) // Local time zone
       return format(date, 'MMM d')
-    },
-  },
-
-  methods: {
-    finishTask(id) {
-      this.$store.commit('finishTask', id)
     },
   },
 }

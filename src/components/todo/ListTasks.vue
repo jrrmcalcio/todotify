@@ -21,7 +21,7 @@ export default {
         return this.$store.getters.taskFiltered
       },
       set(value) {
-        this.$store.commit('updateTasks', value)
+        this.$store.dispatch('updateTasks', value)
       },
     },
   },

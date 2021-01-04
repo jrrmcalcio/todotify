@@ -12,6 +12,7 @@
           v-for="(item, i) in items"
           :key="i"
           @click="dialog(item.dialog)"
+          :disabled="$store.state.search && item.title === 'Sort'"
         >
           <v-list-item-icon>
             <v-icon v-text="item.icon"></v-icon>
@@ -97,6 +98,12 @@ export default {
         this.dialogs[dialog] = true
         return
       }
+
+      if (this.$store.state.search) {
+        this.$store.commit('showSnackbar', 'Can not sort while searching')
+        return
+      }
+
       this.$store.commit('toggleSorting')
     },
   },

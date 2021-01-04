@@ -1,4 +1,5 @@
 # todotify
+This app is to track to do tasks, it uses local storage so you can't sync around multiples devices.
 
 ## Project setup
 ```

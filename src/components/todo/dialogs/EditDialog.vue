@@ -59,6 +59,7 @@ export default {
       if (!this.valid) return
       this.$store.dispatch('editTask', { ...this.task, newTitle: this.title })
       this.$emit('edited')
+      this.$vuetify.goTo(0, { duration: 0 })
     },
   },
 }

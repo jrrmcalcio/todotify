@@ -19,3 +19,8 @@ export default {
   },
 }
 </script>
+
+<style lang="sass" scoped>
+div.v-snack:not(.v-snack--absolute)
+    height: 100%
+</style>

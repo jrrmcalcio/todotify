@@ -1,32 +1,18 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+import Localbase from 'localbase'
+
+let db = new Localbase('db')
+db.config.debug = false
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
     appTitle: process.env.VUE_APP_TITLE,
     search: null,
-    tasks: [
-      {
-        id: 1,
-        title: 'Wake up',
-        done: true,
-        dueDate: '2020-10-16',
-      },
-      {
-        id: 2,
-        title: 'Get bananas',
-        done: false,
-        dueDate: '2020-10-17',
-      },
-      {
-        id: 3,
-        title: 'Eat bananas',
-        done: false,
-        dueDate: null,
-      },
-    ],
+    tasks: [],
     snackbar: {
       show: false,
       message: '',
@@ -38,15 +24,9 @@ export default new Vuex.Store({
       state.search = search
     },
     addTask(state, newTask) {
-      state.tasks.push({
-        id: Date.now(),
-        title: newTask,
-        done: false,
-        dueDate: '',
-      })
+      state.tasks.push(newTask)
     },
-    finishTask(state, id) {
-      const task = state.tasks.filter(t => t.id === id)[0]
+    finishTask(state, task) {
       task.done = !task.done
     },
     deleteTask(state, id) {
@@ -61,8 +41,7 @@ export default new Vuex.Store({
       task.dueDate = editedTask.newDueDate
     },
     updateTasks(state, newTasks) {
-      const missingTasks = state.tasks.filter(t => newTasks.indexOf(t) < 0)
-      state.tasks = [...newTasks, ...missingTasks]
+      state.tasks = newTasks
     },
     showSnackbar(state, message) {
       state.snackbar.show = true
@@ -78,23 +57,70 @@ export default new Vuex.Store({
   },
   actions: {
     addTask({ commit }, newTask) {
-      commit('addTask', newTask)
-      commit('showSnackbar', 'Task ' + newTask + ' added!')
+      const task = {
+        id: Date.now(),
+        title: newTask,
+        done: false,
+        dueDate: '',
+      }
+      db.collection('tasks')
+        .add(task)
+        .then(() => {
+          commit('addTask', task)
+          commit('showSnackbar', 'Task ' + task.title + ' added!')
+        })
+    },
+    finishTask({ commit }, task) {
+      db.collection('tasks')
+        .doc({ id: task.id })
+        .update({ done: !task.done })
+        .then(() => {
+          commit('finishTask', task)
+        })
     },
     deleteTask({ commit }, task) {
-      commit('deleteTask', task.id)
-      commit('showSnackbar', 'Task ' + task.title + ' deleted!')
+      db.collection('tasks')
+        .doc({ id: task.id })
+        .delete()
+        .then(() => {
+          commit('deleteTask', task.id)
+          commit('showSnackbar', 'Task ' + task.title + ' deleted!')
+        })
     },
     editTask({ commit }, editedTask) {
-      commit('editTask', editedTask)
-      commit(
-        'showSnackbar',
-        'Task ' + editedTask.title + ' edited to ' + editedTask.newTitle
-      )
+      db.collection('tasks')
+        .doc({ id: editedTask.id })
+        .update({ title: editedTask.newTitle })
+        .then(() => {
+          commit('editTask', editedTask)
+          commit(
+            'showSnackbar',
+            'Task ' + editedTask.title + ' edited to ' + editedTask.newTitle
+          )
+        })
     },
     setDueDate({ commit }, editedTask) {
-      commit('setDueDate', editedTask)
-      commit('showSnackbar', 'Due date set for ' + editedTask.title)
+      db.collection('tasks')
+        .doc({ id: editedTask.id })
+        .update({ dueDate: editedTask.newDueDate })
+        .then(() => {
+          commit('setDueDate', editedTask)
+          commit('showSnackbar', 'Due date set for ' + editedTask.title)
+        })
+    },
+    updateTasks({ state, commit }, newTasks) {
+      const missingTasks = state.tasks.filter(t => newTasks.indexOf(t) < 0)
+      const newOrderedTasks = [...newTasks, ...missingTasks]
+
+      db.collection('tasks').set(newTasks)
+      commit('updateTasks', newOrderedTasks)
+    },
+    getTasks({ commit }) {
+      db.collection('tasks')
+        .get()
+        .then(tasks => {
+          commit('updateTasks', tasks)
+        })
     },
   },
   getters: {

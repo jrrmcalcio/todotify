@@ -48,12 +48,12 @@
       src="/assets/images/mountains.jpg"
       app
       prominent
-      height="170"
+      :height="$route.path === '/' ? 238 : 170"
     >
       <template v-slot:img="{ props }">
         <v-img
           v-bind="props"
-          gradient="to top right, rgba(19,84,122,.5), rgba(128,208,199,.8)"
+          gradient="to top right, rgba(19,84,122,.9), rgba(128,208,199,.9)"
         ></v-img>
       </template>
 
@@ -75,6 +75,10 @@
         <v-row>
           <live-date-time />
         </v-row>
+
+        <v-row v-if="$route.path == '/'">
+          <field-add-task />
+        </v-row>
       </v-container>
     </v-app-bar>
 
@@ -89,9 +93,10 @@
 import Search from './components/tools/Search.vue'
 import Snackbar from './components/global/Snackbar.vue'
 import LiveDateTime from './components/tools/LiveDateTime.vue'
+import FieldAddTask from '@/components/todo/FieldAddTask'
 
 export default {
-  components: { Snackbar, Search, LiveDateTime },
+  components: { Snackbar, Search, LiveDateTime, FieldAddTask },
 
   data: () => ({
     drawer: false,
@@ -100,6 +105,10 @@ export default {
       { title: 'About', icon: 'mdi-help-box', to: '/about' },
     ],
   }),
+
+  mounted() {
+    this.$store.dispatch('getTasks')
+  },
 }
 </script>
 
