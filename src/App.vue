@@ -11,20 +11,20 @@
           <v-row justify="center">
             <v-avatar site="70" class="mb-2">
               <img
-                src="http://www.gravatar.com/avatar/74780e084a7653df7fe841399be1d036?s=160"
-                alt="jrrmcalcio"
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3yRn4mg9mp4jh8yTqzYpY0mskZKB-XXxM6A&usqp=CAU"
+                alt="Todotify"
               />
             </v-avatar>
           </v-row>
 
           <v-row justify="center">
             <div class="white--text text-subtitle-1 font-weight-bold">
-              Julio Rodas
+              Todotify
             </div>
           </v-row>
 
           <v-row justify="center">
-            <div class="white--text text-subtitle-2">jrrmcalcio</div>
+            <div class="white--text text-subtitle-2">Track your to do list</div>
           </v-row>
         </v-container>
       </v-img>
